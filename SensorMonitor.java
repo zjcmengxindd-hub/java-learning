@@ -3,6 +3,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 class Device {
     String name;
@@ -22,7 +25,7 @@ class Device {
 
     void stop() {
         running = false;
-        System.out.println(name + "停止");
+        // System.out.println(name + "停止");
     }
 
     void collect() {
@@ -76,6 +79,7 @@ public class SensorMonitor {
         List<String> lines = Files.readAllLines(Path.of("E:/桌面/JAVA喵/sensors.txt"));
 
         List<Device> devices = new ArrayList<>();
+        Map<String, Device> sensorMap = new HashMap<>();
 
         for (int i = 0; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(",");
@@ -91,20 +95,23 @@ public class SensorMonitor {
                 t.value = value;
                 t.threshold = threshold;
                 devices.add(t);
+                sensorMap.put(name, t);
             } else if ("电压".equals(type)) {
                 VoltageSensor v = new VoltageSensor();
                 v.name = name;
                 v.value = value;
                 v.threshold = threshold;
                 devices.add(v);
+                sensorMap.put(name, v);
             } else if ("湿度".equals(type)) {
                 HumiditySensor h = new HumiditySensor();
                 h.name = name;
                 h.value = value;
                 h.threshold = threshold;
                 devices.add(h);
+                sensorMap.put(name, h);
             } else {
-                System.out.println("⚠️ 未知设备类型: " + type);
+                System.out.println("警告，未知设备类型: " + type);
             }
         }
 
@@ -123,6 +130,33 @@ public class SensorMonitor {
             d.stop();
         }
 
+        Device found = sensorMap.get("车间");
+        System.out.println("查询[车间]:" + found.name + " → " + found.value);
+
+        Device notfound = sensorMap.get("变电站");
+        if (notfound == null) {
+            System.out.println("没有找到[变电站]这个设备");
+        } else {
+            System.out.println(notfound.name + " → " + notfound.value);
+        }
+
         System.out.println("====== 共 " + devices.size() + " 台设备，" + alarmCount + " 台报警 ======");
+
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("输入需要查询的设备名称(输入 exit 后退出):");
+            String input = sc.nextLine();
+            if (input.equals("exit")) {
+                break;
+            }
+
+            Device d = sensorMap.get(input);
+            if (d == null) {
+                System.out.println("没有找到叫[" + input + "]的设备喵");
+            } else {
+                System.out.println(d.name + "→ 当前值" + d.value + "(阈值" + d.threshold + ")");
+            }
+        }
+        sc.close();
     }
 }
