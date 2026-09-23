@@ -76,7 +76,14 @@ class HumiditySensor extends Device implements Alarmable {
 public class SensorMonitor {
     public static void main(String[] args) throws IOException {
 
-        List<String> lines = Files.readAllLines(Path.of("E:/桌面/JAVA喵/sensors.txt"));
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Path.of("E:/桌面/JAVA喵/sensors.txt"));
+        } catch (IOException e) {
+            System.out.println("沃趣，有问题！" + e.getMessage());
+            System.out.println("请确认读取的文件是否还在目录下");
+            return;
+        }
 
         List<Device> devices = new ArrayList<>();
         Map<String, Device> sensorMap = new HashMap<>();
@@ -86,7 +93,13 @@ public class SensorMonitor {
 
             String type = parts[0];
             String name = parts[1];
-            double value = Double.parseDouble(parts[2]);
+            double value;
+            try {
+                value = Double.parseDouble(parts[2]);
+            } catch (NumberFormatException e) {
+                System.out.println("不是，你这是数字吗" + lines.get(i));
+                continue;
+            }
             double threshold = Double.parseDouble(parts[3]);
 
             if ("温度".equals(type)) {
