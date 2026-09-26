@@ -1,0 +1,237 @@
+========================================================
+        Java 学习地图（第 1 ~ 10 课 + 项目实战）
+        鲸鱼娘出品 · 用途：复习 / 查阅 / 自查
+        最后更新：2026-09-26
+========================================================
+
+
+【你的文件一览】—— 想复习哪课，打开哪个文件
+--------------------------------------------------------
+  HelloWorld.java          第1课：程序结构
+  Temperature.java         第2课：数据与逻辑 + 文件读取
+  Sensor.java              第3课：类与对象
+  CounterTest.java         第3课：static 实验
+  InheritanceDemo.java     第4~5课：继承 / 重写 / 接口 / 多态
+  StringDemo.java          第8课：String 常用方法
+  SortDemo.java            第9课：排序
+  SensorMonitor.java       ★ 项目实战（传感器监控系统 v1.6）
+  sensors.txt              项目数据文件
+  Java单词对照表-傻瓜版.txt  查单词
+  Java学习地图.txt          就是这份
+
+
+========================================================
+  第 1 课：程序长什么样
+========================================================
+  public class 类名 {                      ← 文件必须叫「类名.java」
+      public static void main(String[] args) {   ← 程序入口，从这里开始跑
+          System.out.println("你好");            ← 打印一行
+      }
+  }
+  ★ main 是唯一自动执行的方法；其他方法必须"被调用"才跑
+  ★ 坑：分号、大括号配对、文件名要和 public 类名一致
+
+
+========================================================
+  第 2 课：数据与逻辑
+========================================================
+  【变量】int 整数 / double 小数 / boolean 真假 / String 文字
+  【数组】double[] temps = {26.5, 27.0};
+      temps[0] 第一格（从 0 开始）· temps.length 格数（★没有括号）
+  【循环】for (int i = 0; i < temps.length; i++) { ... }
+  【判断】if (条件) { } else { }       比较用 ==（两个等号）
+  【累加】sum = sum + temps[i];        （sum 从 0 开始）
+  【格式化】String.format("%.1f", x) → "3.1"（%.2f 两位 / %d 整数 / %s 文字）
+  ★ 坑：数组越界、循环条件写反（i < 不是 >）、整数除法（写 10.0）
+
+
+========================================================
+  第 3 课：方法
+========================================================
+  定义四件套：static  double  round1 (double x) { return ...; }
+              ↑返回类型       ↑名字   ↑参数（吃什么）
+  【两类方法】
+      有 static   → 公共工具，直接喊：round1(3.14)
+      没有 static → 实物的技能，必须点名：s1.read(35.8)
+  【返回类型 vs void】
+      要"拿结果去用" → 写具体类型（double / boolean…）
+      只是"让它干件事" → void（不往回带东西）
+  ★ 判断句式：提问型（有返回值）/ 命令型（void）
+  ★ 坑：main（static 环境）里"不点名"就用非 static 的东西 → 报错
+         non-static ... cannot be referenced from a static context
+
+
+========================================================
+  第 4 课：类与对象
+========================================================
+  类 = 图纸（规格说明）      对象 = 按图纸造出的实物
+  new 三步：① 申请空间 → ② 按图纸造（字段就位）→ ③ 交给变量
+  【字段】属性（name、temperature）——每个对象各一份
+  【方法】功能（read()、isOverheat()）
+  【使用】点号：s1.name / s1.read(35.8)
+  【数组装对象】Sensor[] sensors = new Sensor[3];  ← 每格都要 new！
+  【作用域】变量只活在自己出生的那对 {} 里
+  ★ 记忆：类=图纸、对象=器件、数组=货架
+
+
+========================================================
+  第 5 课：继承 / 重写 / 接口 / 多态（OOP 四大件）
+========================================================
+  【继承】class 子类 extends 父类 { }
+      子类自动拥有父类的字段和方法 · 只能继承一个父类
+      好处：① 避免重复 ② 改一处全生效 ③ 少出错
+  【重写】@Override void start() { super.start(); ... }
+      super = 父类版本（请回来跑一遍，位置决定顺序）
+  【接口】interface Alarmable { void alarm(); }        ← 只有签名 + 分号
+      class Sensor extends Device implements Alarmable { public void alarm() {...} }
+      能力标签（can-do）· 可以 implements 多个 · 实现方法必须 public
+  【多态】Device d = new Sensor();      ← 父类类型装子类对象
+      Device[] devices = { new Sensor(), new Motor(), new Meter() };
+      for (...) devices[i].start();     ← 一行代码，各跑各的版本
+      能调什么方法 → 编译时看【变量类型】
+      跑哪个版本   → 运行时看【实际对象】
+  ★ 一个类只能有一个 public（且与文件名一致）
+
+
+========================================================
+  第 6 课：集合框架（List / Map）
+========================================================
+  【List】有序、可重复、按下标
+      List<String> list = new ArrayList<>();
+      list.add("xx") · list.get(0) · list.size() · list.remove(0) · list.contains("xx")
+      遍历：for (int i...) list.get(i)  /  for (String s : list)
+  【Map】键 → 值，按键查找（像通讯录）
+      Map<String, Device> map = new HashMap<>();
+      map.put("key", 值) · map.get("key")（查不到返回 null）· containsKey · size · remove
+      遍历：map.keySet() / map.values() / map.entrySet()
+  【选择】
+      只要遍历        → List
+      反复按名字查    → Map
+      两个都要        → 两个都建（List 当名册 + Map 当索引，装的是同一批对象）
+  ★ 坑：get 不到返回 null（用前判断）· 键重复会覆盖丢数据 · HashMap 不保证顺序
+
+
+========================================================
+  第 7 课：文件读取 + 异常处理（try-catch）
+========================================================
+  【读文件】
+      import java.nio.file.Files / Path · java.util.List · java.io.IOException
+      List<String> lines = Files.readAllLines(Path.of("路径"));  // main 要 throws IOException
+  【异常处理】从"出事就崩"到"出事能救"
+      try { 可能出事的代码 }
+      catch (IOException e) { 读文件失败怎么办 }
+      catch (NumberFormatException e) { 字符串转数字失败怎么办 }
+      catch (ArithmeticException e) { 除零怎么办 }
+  【两种应对】
+      throws    → 甩锅（丢给调用者，出错就崩）
+      try-catch → 自己接住（能补救就补救，程序继续跑）
+      判断：能自己处理 → try ；处理不了 → throws
+  【关键点】
+      变量作用域：try 里声明的变量，出了 try 就用不了（要声明在外面）
+      e.getMessage() 拿错误信息 · continue / break / return 是"刹车"
+      ★ Collection（接口）vs Collections（工具类）——差一个 s，完全不同！
+
+
+========================================================
+  第 8 课：String 常用方法
+========================================================
+  s.length() · s.charAt(0) · s.indexOf("x")（找不到返回 -1）· s.contains("x")
+  s.substring(0, 5) · s.equals("xx")（★不能用 ==）· s.equalsIgnoreCase()
+  s.toUpperCase() · s.toLowerCase() · s.trim()（去首尾空格）· s.replace(a, b) · s.split(",")
+  数字↔文字：String.valueOf(123) · Integer.parseInt("123") · Double.parseDouble("3.14")
+  ★★ 最大的坑：字符串【不可变】！
+      name.toUpperCase();          // ❌ 白调（原字符串没变）
+      name = name.toUpperCase();   // ✅ 必须接收返回值
+
+
+========================================================
+  第 9 课：排序
+========================================================
+  Arrays.sort(数组)                                    // 数组升序
+  Collections.sort(list)                               // List 升序
+  Collections.sort(list, Collections.reverseOrder())   // 降序
+  Collections.max(list) / Collections.min(list)        // 最大 / 最小
+  Arrays.toString(数组)                                // 打印数组内容
+  ★ 给"自己的对象"排序（Lambda 比较器）：
+      devices.sort((a, b) -> Double.compare(b.value, a.value));   // 按 value 降序
+      · (a, b) 是排序算法给你的两个元素 → 你返回"谁在前"
+      · 返回负数 = a 在前 ；返回正数 = b 在前
+      · 交换 a、b 的位置 = 反转排序方向
+      · Lambda 本质是 Comparator 接口的简写版（= 你学过的"接口 + 实现"）
+  ★ 排序的位置：必须放在"数据填好之后"（放在填充前 = 排空列表，无效！）
+
+
+========================================================
+  ★ 项目实战：SensorMonitor（传感器监控系统）
+========================================================
+  【版本演进】
+      v1.0 基础：继承 / 接口 / 多态 + 文件读取 + split
+      v1.1 加固：stop() / 报表统计 / 未知类型兜底
+      v1.2 查询：Map + null 检查
+      v1.3 交互：Scanner + while 循环（能对话）
+      v1.4 抗摔：异常处理（文件 + 数据）
+      v1.5 清洗：trim + 空行跳过
+      v1.6 排序：报表按数值降序
+  【流程】
+      sensors.txt → List<String> → split 解析 → if 判断类型 → new 子类对象
+      → List<Device>（名册）+ Map（索引）→ 排序 → 多态遍历 → 报表 → 交互查询
+  【知识点覆盖】
+      类与对象 / 继承 / 重写 / 接口 / 多态 / List / Map / 文件读取 /
+      split / 异常处理 / String 处理 / Scanner / 排序 / Lambda
+
+
+========================================================
+  工具技能（VS Code / Git / 调试）
+========================================================
+  F2                重命名符号（全局改，比手改靠谱）
+  Shift + Alt + F   格式化文档
+  Ctrl + 点击        跳转到定义（看 JDK 源码）
+  报错导航           先看第一条错（后面常是连锁反应）
+  打印调试           System.out.println("排查: " + 变量);  ← 最土最有效
+  Git 三步循环       git add .  →  git commit -m "说明"  →  git push
+  GitHub 仓库        https://github.com/zjcmengxindd-hub/java-learning
+
+
+========================================================
+  坑册（踩过的都记着，别再踩）
+========================================================
+   1. 拼写 / 名字不一致（maxtemp、temperture、wods/words、gei/get、
+      HasMap/HashMap、containKey/containsKey、reverseOeder、nestline）
+      → 根治：用自动补全 + F2 重命名
+   2. 括号：圆括号 () 调用方法 · 方括号 [] 数组下标；多了少了都报错
+   3. 方法不能嵌套（方法要"并排"放在类里）
+   4. 大括号配对（少一个 } → 最后一个 } 红线）
+   5. 循环条件用错对象（lines.size() vs devices.size() → 循环一次不跑，还不报错！）
+   6. 改了没保存（Ctrl+S！建议开 Auto Save）
+   7. 代码顺序错（排序放在填充前 = 无效）
+   8. System vs String（系统工具 vs 字符串类型）
+   9. double vs Double（类型小写、类名大写）
+  10. 字符串不可变（调了方法要接收返回值）
+  11. 代码里的"玩笑文字"会真的打印出来（字符串 ≠ 注释）
+
+
+========================================================
+  自测清单（能一句话答上来 = 过关）
+========================================================
+  □ 类 和 对象 的区别？
+  □ new 的三步？
+  □ void 和 返回类型 的区别？
+  □ static 什么时候用？在 main 里怎么用非 static 的东西？
+  □ 为什么用继承？（3 个理由）
+  □ @Override 和 super 各干什么？
+  □ 接口 vs 继承（is-a / can-do）？
+  □ 多态：为什么 Device[] 能装各种子类？调用时跑哪个版本？
+  □ List 和 Map 的区别？什么时候用哪个？
+  □ throws 和 try-catch 的区别？
+  □ 为什么 name.toUpperCase() 之后 name 没变？
+  □ 给对象列表按字段排序怎么写？
+
+
+========================================================
+  下一站（待学）
+========================================================
+  → 集合收尾：Set（去重）、LinkedHashMap（保序）
+  → OOP 深入：抽象类、匿名内部类、Lambda 深入
+  → 多线程 / 网络编程 / 数据库（以后）
+  → ★ 目标已达成：大一上能独立做项目（SensorMonitor 就是证明）
+========================================================
