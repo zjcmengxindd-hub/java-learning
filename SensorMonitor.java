@@ -89,10 +89,14 @@ public class SensorMonitor {
         Map<String, Device> sensorMap = new HashMap<>();
 
         for (int i = 0; i < lines.size(); i++) {
-            String[] parts = lines.get(i).split(",");
+            String line = lines.get(i).trim();
+            if (line.isEmpty()) {
+                continue;
+            }
 
-            String type = parts[0];
-            String name = parts[1];
+            String[] parts = line.split(",");
+            String type = parts[0].trim();
+            String name = parts[1].trim();
             double value;
             try {
                 value = Double.parseDouble(parts[2]);
@@ -129,6 +133,8 @@ public class SensorMonitor {
         }
 
         int alarmCount = 0;
+
+        devices.sort((a, b) -> Double.compare(b.value, a.value));
 
         for (int i = 0; i < devices.size(); i++) {
             Device d = devices.get(i);
